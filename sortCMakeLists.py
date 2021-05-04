@@ -2,9 +2,13 @@
 
 # ToDo: option to override input-file
 # ToDo: vor dem Check die Leerzeichen aus dem String entfernen
-# ToDo: Duplikate entfernen
 
 import sys
+from collections import OrderedDict
+
+def removeListDuplicates(inputList):
+    return list(OrderedDict.fromkeys(inputList))
+
 
 class CMakeListsProcessor:
     def __init__(self):
@@ -34,8 +38,7 @@ class CMakeListsProcessor:
             self.state='BlockState'
             self.blockLines=[]            
         elif (self.isBlockEnd(lineString)):
-            self.blockLines.sort();
-            self.outputLines.extend(self.blockLines)
+            self.outputLines.extend(removeListDuplicates(self.blockLines))
             self.blockLines=[]
             self.outputLines.append(lineString)
             if lineString.startswith(')'):
@@ -65,10 +68,8 @@ reader = open(sys.argv[1], 'r')
 writer = open('test_output.txt','w')
 try:
     lines = testFunc(reader)
-    #lines.sort()
     for line in lines:
         writer.write(line)
-    #print(lines)
 finally:
     reader.close()
     writer.close()

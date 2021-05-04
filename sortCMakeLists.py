@@ -1,7 +1,10 @@
-# ToDo: input-file via commandline-argument
+#!/usr/bin/python
+
 # ToDo: option to override input-file
 # ToDo: vor dem Check die Leerzeichen aus dem String entfernen
 # ToDo: Duplikate entfernen
+
+import sys
 
 class CMakeListsProcessor:
     def __init__(self):
@@ -26,25 +29,19 @@ class CMakeListsProcessor:
             return False
 
     def processLine(self,lineString):
-        #print(lineString)
-        #if (lineString.startswith('target_sources(') or lineString.startswith('add_executable(')):
         if (self.isBlockStart(lineString)):
             self.outputLines.append(lineString)
             self.state='BlockState'
             self.blockLines=[]            
-        #elif (lineString.startswith(')') or lineString.find('PRIVATE')>=0 or lineString.find('PUBLIC')>=0):
         elif (self.isBlockEnd(lineString)):
-            #print(lineString)
             self.blockLines.sort();
             self.outputLines.extend(self.blockLines)
             self.blockLines=[]
-            #print(self.blockLines)
             self.outputLines.append(lineString)
             if lineString.startswith(')'):
                 self.state='CopyState'            
         else:
             if self.state=='BlockState':
-                #print(lineString)
                 self.blockLines.append(lineString)
             else:
                 self.outputLines.append(lineString)
@@ -57,14 +54,14 @@ def testFunc(fileReader):
     while line != '':  # The EOF char is an empty string
         lines.append(line)
         lineProcessor.processLine(line)
-        #print(line)
-        #writer.write(line)
         line = fileReader.readline()
-    #lines.sort()
-    #return lines
     return lineProcessor.outputLines
 
-reader = open('test_input.txt', 'r')
+if (len(sys.argv)!=2):
+    print "CMakeLists.txt source-file sorter v0.1.0"
+    print "usage: " + sys.argv[0] + " <FileNameWithPath>"
+    exit()
+reader = open(sys.argv[1], 'r')
 writer = open('test_output.txt','w')
 try:
     lines = testFunc(reader)

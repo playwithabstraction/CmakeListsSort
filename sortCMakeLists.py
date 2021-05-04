@@ -1,6 +1,5 @@
 #!/usr/bin/python
 
-# ToDo: option to override input-file
 # ToDo: vor dem Check die Leerzeichen aus dem String entfernen
 
 import sys
@@ -60,14 +59,28 @@ def testFunc(fileReader):
         line = fileReader.readline()
     return lineProcessor.outputLines
 
-if (len(sys.argv)!=2):
+
+def printUsage(progName):
     print "CMakeLists.txt source-file sorter v0.1.0"
-    print "usage: " + sys.argv[0] + " <FileNameWithPath>"
+    print "usage: " + progName + " <FileNameWithPath> [options]"
+    print "--override 	overrides the input-file"
+    return
+
+if (len(sys.argv)<2 or len(sys.argv)>3):
+    printUsage(sys.argv[0])
     exit()
+
+if (len(sys.argv)==3 and sys.argv[2]!='--override'):
+    printUsage(sys.argv[0])
+    exit()
+
+outputFile='output.txt'
+if (len(sys.argv)==3 and sys.argv[2]=='--override'):
+    outputFile=sys.argv[1]
 reader = open(sys.argv[1], 'r')
-writer = open('test_output.txt','w')
 try:
     lines = testFunc(reader)
+    writer = open(outputFile,'w')
     for line in lines:
         writer.write(line)
 finally:

@@ -3,10 +3,9 @@
 # ToDo: vor dem Check die Leerzeichen aus dem String entfernen
 
 import sys
-from collections import OrderedDict
 
-def removeListDuplicates(inputList):
-    return list(OrderedDict.fromkeys(inputList))
+def removeListDuplicatesAndSort(inputList):
+    return sorted(set(inputList))
 
 
 class CMakeListsProcessor:
@@ -37,7 +36,7 @@ class CMakeListsProcessor:
             self.state='BlockState'
             self.blockLines=[]            
         elif (self.isBlockEnd(lineString)):
-            self.outputLines.extend(removeListDuplicates(self.blockLines))
+            self.outputLines.extend(removeListDuplicatesAndSort(self.blockLines))
             self.blockLines=[]
             self.outputLines.append(lineString)
             if lineString.startswith(')'):
@@ -86,3 +85,4 @@ try:
 finally:
     reader.close()
     writer.close()
+    
